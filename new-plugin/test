@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        .grid-container {
+            display: <?php echo get_option('Alignment') === 'grid' ? 'grid' : 'block'; ?>;
+            <?php if (get_option('Alignment') === 'grid'): ?>
+                grid-template-columns: repeat(<?php echo (int) get_option('numberOfColumns'); ?>, 1fr);
+            <?php endif; ?>
+            gap: <?php echo get_option('Alignment') === 'grid' ? '20px' : '0'; ?>;
+        }
+    </style>
+</head>
+
+<body>
+
+    <?php
+    $args = array(
+        'post_type' => 'post',
+        'posts_per_page' => (int) get_option('numberOfpages'),
+        'tax_query' => array(
+            array(
+                'taxonomy' => 'category',
+                'field' => 'slug',
+                'terms' => get_option('categories'),
+            ),
+        ),
+    );
+
+    $theQuery = new WP_Query($args);
+    ?>
+
+    <div class="grid-container">
+
+        <?php if ($theQuery->have_posts()): ?>
+            <?php while ($theQuery->have_posts()): $theQuery->the_post(); ?>
+                <div style="display: <?php echo get_option('Alignment') ?>; justify-content: <?php echo get_option('Alignment') === 'flex' ? 'center' : 'initial'; ?>;">
+                    <div>
+                        <?php if (has_post_thumbnail()): ?>
+                            <img class="front-thumb" src="<?php echo get_option('thumbnail') === 'true' ? get_the_post_thumbnail_url() : '' ?>" style="width: <?php echo get_option('thumbnailSize'); ?>;" alt="">
+                        <?php endif; ?>
+                    </div>
+                    <div>
+                        <h2><?php the_title(); ?></h2>
+                        <?php the_excerpt(); ?>
+                        <a href="<?php the_permalink(); ?>"><button class="Read-more"><?php echo get_option('buttonText'); ?></button></a>
+                        <br/><br/>
+                    </div>
+                </div>
+            <?php endwhile; ?>
+        <?php endif; ?>
+        
+        <?php wp_reset_postdata(); ?>
+
+    </div>
+
+</body>
+
+</html>

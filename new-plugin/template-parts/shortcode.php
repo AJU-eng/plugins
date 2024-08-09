@@ -10,39 +10,64 @@
 <body>
 
     <?php
+     
+
+
+
+
     $args = array(
         'post_type' => 'post',
-        'posts_per_page' => -1,
+        'posts_per_page' => (int) get_option('numberOfpages'),
+        'tax_query' => array(
+            array(
+                'taxonomy' => 'category',
+                'field' => 'slug',
+                'terms' => get_option('categories'),
+            ),
+        ),
     );
 
     $theQuery = new WP_Query($args);
     ?>
-    <div style="display:grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));">
-
+    <?php $columns = (int)   get_option('numberOfColumns') ?>
+    <?php error_log($columns)?>
+   <div style="display:grid; grid-template-columns: repeat(<?php echo (int) get_option('columCount') ?>, 1fr); "> 
+    
         <?php if ($theQuery->have_posts()):
             while ($theQuery->have_posts()):
                 $theQuery->the_post(); ?>
-                <div style="display:flex; justify-content:center;">
+                
 
-                    <div class="blog-div">
+                    <div >
                         <div>
-                            <?php if ($theQuery->has_post_thumbnail()): ?>
-                                <img class="front-thumb" src="<?php the_post_thumbnail_url() ?>" alt="">
+                            <?php if (has_post_thumbnail()): ?>
+                                <img class="front-thumb" src=" <?php echo get_option('thumbnail') === 'true'? the_post_thumbnail_url() :'' ?>" alt="">
 
                             <?php endif; ?>
                         </div>
                         <div>
                             <h2><?php the_title() ?></h2>
-                            <?php the_excerpt() ?>
-                            <a href="<?php the_permalink() ?>"><button class="Read-more">Read more</button></a>
+                            <?php echo customLength(get_option('excerptCount')) ?>
+                            <a href="<?php the_permalink() ?>"><button class="Read-more"><?php echo get_option('buttonText')  ?></button></a>
                             <?php echo "<br/> <br/>" ?>
                         </div>
                     </div>
-                </div>
+                
 
 
 
             <?php endwhile; endif; ?>
+
+
+            <?php 
+               function customLength($limit){
+                   $excerpt = get_the_excerpt();
+                 return   wp_trim_words($excerpt, $limit);
+            
+               }
+
+
+?>
     </div>
 </body>
 

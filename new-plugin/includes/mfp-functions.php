@@ -27,82 +27,54 @@ $names;
 
 
 function pluginForm() {
-    $number = $_POST['number'];
+    $number = $_POST['postCount'];
     $category = $_POST['category'];
+    $alignment = $_POST['numberOfColumns'];
+    $buttonText = $_POST['buttonText'];
+    $excerptCount = $_POST['excerptCount'];
+    $thumbnail = $_POST['thumbnail'];
+    $thumbnailSize= $_POST['thumbnailSize'];
     update_option('numberOfpages', $number, '', 'yes');
     update_option('categories', $category, '', 'yes');
+    update_option('columCount', $alignment, '', 'yes');
+    update_option('buttonText', $buttonText, '', 'yes');
+    update_option('excerptCount', $excerptCount, '', 'yes');
+    update_option('thumbnail', $thumbnail, '', 'yes');
+    update_option('thumbnailSize', $thumbnailSize, '', 'yes');
 
-    wp_send_json_success($number);
+
+    wp_send_json_success($_POST);
 }
 function pluginShortCode() {
 
-    $category = get_option('categories');
-    $number = (int) get_option('numberOfpages');
-
-
-
-    $args = array(
-        'post_type' => 'post',
-        'posts_per_page' => $number,
-        'tax_query' => array(
-            array(
-                'taxonomy' => 'category',
-                'field' => 'slug',
-                'terms' => $category,
-            ),
-        ),
-
-    );
-    // if (!$category && !$number) {
-    //     $args = array(
-    //         'post_type' => 'post',
-    //         'posts_per_page' => -1,
-    //     );
-    //     $theQuery = new WP_Query($args);
-    //     if ($theQuery->have_posts()) {
-    //         while ($theQuery->have_posts()) {
-    //             $theQuery->the_post();
-    //             echo get_the_title();
-    //             echo "<br/>";
-    //             echo get_the_excerpt();
-    //             echo "<br/>";
-    //             echo "Read more...";
-    //             echo '<br/> <br/>';
-                
-
-    //         }
-    //     }
-    // } else {
-    //     $theQuery = new WP_Query($args);
-
-
-    //     if ($theQuery->have_posts()) {
-    //         while ($theQuery->have_posts()) {
-    //             $theQuery->the_post();
-    //             echo get_the_title();
-    //             echo "<br/>";
-    //             echo get_the_excerpt();
-    //             echo "<br/>";
-    //             echo "Read more...";
-    //             echo '<br/> <br/>';
-                
-
-    //         }
-    //     }
-    // }
-    
      include_once plugin_dir_path(__FILE__) .'../template-parts/shortcode.php';
   
     
 
 }
 
+function pluginThumbnail() {
+    
+    add_theme_support('post-thumbnails');
+    $thumbnail_size = get_option('thumbnailSize');
+    error_log($thumbnail_size); // Temporarily output the size for debugging
+    
+    add_image_size('custom-thumbnail-size',150, 150, true);
+}
+
+
 function tPlugin() {
     wp_enqueue_style("t_plugin", plugin_dir_url(__FILE__) . "../index.css");
 }
 
-add_action('admin_enqueue_scripts', 'tPlugin');
+function customExcerptLength() {
+  $word = (int) $_POST['excerptCount'];
+  return $word;
+}
 
+apply_filters('excerpt_length','customExcerptLength');
+add_action('after_setup_theme', 'pluginThumbnail');
+add_action('admin_enqueue_scripts', 'tPlugin');
 
 add_action('admin_menu', 'adminMenuItem');
 add_action('wp_ajax_form', 'pluginForm');

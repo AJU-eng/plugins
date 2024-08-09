@@ -22,7 +22,7 @@
             <form id="form" style="margin-top:20px">
               <div class="inputDiv">
                 <label for="number" class="label">Number of Posts</label><br>
-                <input class="number" type="number" value="<?php echo get_option('numberOfpages') ?>" name="number">
+                <input class="number" type="number" value="<?php echo get_option('numberOfpages') ?>" name="postCount">
               </div>
               <div class="inputDiv2">
                 <label class="label" for="number">Select Category</label><br>
@@ -54,43 +54,28 @@
                   <div class="radio-thumb">
                     <div>
 
-                      <input class="radio" name="radio" type="radio"><span class="rad">yes</span>
+                      <input class="radio" name="thumbnail" value="true" type="radio" <?php echo get_option('thumbnail')==='true'?  'checked' : '' ?>><span class="rad">yes</span>
                     </div>
                     <div>
 
-                      <input class="radio" name="radio" type="radio"><span class="rad">no</span>
+                      <input class="radio" name="thumbnail" value="false" type="radio"><span class="rad" <?php echo get_option('thumbnail')==='false'?  'checked' : '' ?>>no</span>
                     </div>
                   </div>
                 </div>
-                <div class="thumbs">
-                  <label class="thumb-sze" for="thumb">Thumbnail Size</label><br>
-                  <div >
-                    <div>
-
-                      <label for="thumb-sze"></label>
-                    </div>
-                    <div>
-
-                      <input class="size" name="radio" type="number">
-                    </div>
-                  </div>
-                </div>
+                
                 <div>
-                  <label class="thumb-sze" for="thumb">Alignment</label><br>
+                  <label class="thumb-sze" for="thumb">Column Number</label><br>
                   <div >
                     <div>
 
                       <label for="thumb-sze"></label>
                     </div>
-                    <div class="radio-thumb">
+                    <div class="thumbs">
                     <div>
 
-                      <input class="radio" name="radio" type="radio"><span class="rad">Row</span>
+                      <input class="thumb-sze" value="<?php echo get_option('columCount') ?>" name="numberOfColumns"  type="number">
                     </div>
-                    <div>
-
-                      <input class="radio" name="radio" type="radio"><span class="rad">Column</span>
-                    </div>
+                    
                   </div>
                   </div>
                 </div>
@@ -103,7 +88,7 @@
                     </div>
                     <div>
 
-                      <input class="size" name="radio" type="number">
+                      <input class="size" name="excerptCount" value="<?php echo get_option('excerptCount') ?>" type="number">
                     </div>
                   </div>
                 </div>
@@ -116,7 +101,7 @@
                     </div>
                     <div>
 
-                      <input class="size" name="radio" type="number">
+                      <input class="size" name="buttonText" value="<?php  echo get_option('buttonText') ?>" type="text">
                     </div>
                   </div>
                 </div>
@@ -155,6 +140,8 @@
           contentType: false,
           success: function (res) {
             $("#loading").hide()
+            console.log(res.data);
+            
           },
 
           error: function (err) {
